@@ -1,6 +1,6 @@
 import streamlit as st
 import requests
-import logging, os
+import logging, os, time
 from decouple import config
 from langchain_google_genai import ChatGoogleGenerativeAI
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -62,3 +62,11 @@ if prompt := st.chat_input():
 
 # Display the data or results
 st.write("To refresh press R")
+
+while True:
+    url = "https://ai-chatbot-locf.onrender.com/"
+    resp = requests.get(url)
+    print("===============================")
+    print(resp)
+    print("===============================")
+    time.sleep(10)
