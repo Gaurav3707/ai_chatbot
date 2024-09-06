@@ -63,10 +63,10 @@ if prompt := st.chat_input():
 # Display the data or results
 st.write("To refresh press R")
 
-while True:
-    url = "https://ai-chatbot-locf.onrender.com/"
-    resp = requests.get(url)
-    print("===============================")
-    print(resp)
-    print("===============================")
-    time.sleep(10)
+# while True:
+#     url = "https://ai-chatbot-locf.onrender.com/"
+#     resp = requests.get(url)
+#     print("===============================")
+#     print(resp)
+#     print("===============================")
+#     time.sleep(10)
