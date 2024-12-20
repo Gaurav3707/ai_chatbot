@@ -2,40 +2,44 @@ import streamlit as st
 import requests
 import logging, os, time
 from decouple import config
-import google.generativeai as genai
-
+from langchain_google_genai import ChatGoogleGenerativeAI
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Set the API key and endpoint for the Gemini LLM API
-API_KEY = config('api_key')
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
 
-# Function to send a message to the Gemini LLM
+os.environ["GOOGLE_API_KEY"] = config('api_key')
+llm = ChatGoogleGenerativeAI(model="gemini-pro",convert_system_message_to_human=True)
+
+
 def get_hf_ai_response(user_message):
+    return llm.invoke(user_message)
 
-    try:
-        response = response = model.generate_content(user_message)
-        
-        return response.text
-    except requests.exceptions.RequestException as e:
-        logging.error(f"Failed to send message to Gemini API: {e}")
-        return "Error processing your request, please try again."
+
 
 # Function to send a message to the assistant
 def send_message(msg_thread):
     try:
-        # Join the messages into a single thread for context
-        user_message = "\n".join([msg["content"] for msg in msg_thread if msg["role"] == "user"])
-        response_content = get_hf_ai_response(user_message)
-        logging.info(f"Sending Message Response: {response_content}")
-        return response_content
-    except Exception as e:
-        logging.error(f"Failed to process message: {e}")
+        response = get_hf_ai_response(msg_thread)
+        print(f"Sending Message Response: {response}")
+        print(response.content)
+        return response.content
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Failed to send message: {e}")
         return "Error processing your request, please try again."
 
+# Sidebar for user input
+# with st.sidebar:
+    # user_id = st.text_input("User ID", key="user_id", type="default")
+    # new_user_id = st.text_input("New User ID", key="new_user_id", type="default")
+    # st.caption("🚀 Powered by Gemini")
+    # if st.button("Create New User ID"):
+    #     new_user_message = "Hi there!"
+    #     st.session_state.messages.append({"role": "user", "content": new_user_message})
+    #     response = create_new_conversation(new_user_message, new_user_id, working_base_url)
+    #     st.session_state.messages.append({"role": "assistant", "content": response})
+    #     st.rerun()
+
 st.title("AI Chatbot")
-st.caption("Powered by Gemini")
+st.caption("🚀 Powered by Gemini")
 
 # Display conversation history
 if "messages" not in st.session_state:
@@ -55,5 +59,14 @@ if prompt := st.chat_input():
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.rerun()
 
+
 # Display the data or results
 st.write("To refresh press R")
+
+# while True:
+#     url = "https://ai-chatbot-locf.onrender.com/"
+#     resp = requests.get(url)
+#     print("===============================")
+#     print(resp)
+#     print("===============================")
+#     time.sleep(10)
